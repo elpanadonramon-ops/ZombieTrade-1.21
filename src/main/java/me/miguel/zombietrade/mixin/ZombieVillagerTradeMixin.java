@@ -12,18 +12,26 @@ import net.minecraft.util.Hand;
 import net.minecraft.village.TradeOfferList;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.gen.Accessor;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
-// IMPORTANTE: Este import le dice al Mixin dónde está el Accessor que creaste
-import me.miguel.zombietrade.mixin.ZombieVillagerEntityAccessor;
 
 @Mixin(ZombieVillagerEntity.class)
 public abstract class ZombieVillagerTradeMixin extends ZombieEntity {
 
     public ZombieVillagerTradeMixin(EntityType<? extends ZombieEntity> entityType, World world) {
         super(entityType, world);
+    }
+
+    // Interfaz interna para acceder a los datos privados del zombi
+    @Mixin(ZombieVillagerEntity.class)
+    public interface ZombieVillagerAccessor {
+        @Accessor("offers")
+        TradeOfferList getOffers();
+
+        @Accessor("experience")
+        int getExperience();
     }
 
     @Inject(method = "interactMob", at = @At("HEAD"), cancellable = true)
@@ -33,13 +41,12 @@ public abstract class ZombieVillagerTradeMixin extends ZombieEntity {
         if (itemStack.isOf(Items.EMERALD)) {
             ZombieVillagerEntity self = (ZombieVillagerEntity)(Object)this;
             
-            // Accedemos a los datos ocultos del zombi
-            TradeOfferList offers = ((ZombieVillagerEntityAccessor)self).getOffers();
-            int exp = ((ZombieVillagerEntityAccessor)self).getExperience();
+            // Usamos la interfaz interna
+            TradeOfferList offers = ((ZombieVillagerAccessor)self).getOffers();
+            int exp = ((ZombieVillagerAccessor)self).getExperience();
 
             if (!this.getWorld().isClient) {
                 if (offers != null && !offers.isEmpty()) {
-                    // Abrimos la interfaz directamente con los datos del zombi
                     player.sendTradeOffers(
                         player.currentScreenHandler.syncId, 
                         offers, 
@@ -49,10 +56,9 @@ public abstract class ZombieVillagerTradeMixin extends ZombieEntity {
                         false
                     );
                 } else {
-                    player.sendMessage(Text.literal("§cEste zombi no tiene nada que vender..."), true);
+                    player.sendMessage(Text.literal("§cEste zombi no tiene nada que vender todavía..."), true);
                 }
             }
-            // Retornamos SUCCESS para que el juego sepa que la esmeralda "activó" algo
             cir.setReturnValue(ActionResult.success(this.getWorld().isClient));
         }
     }
