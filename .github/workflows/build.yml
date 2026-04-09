@@ -18,7 +18,19 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.10'
+          # Apagamos la caché de GitHub Action temporalmente
           cache-disabled: true
 
+      - name: Nuke Loom Cache
+        # Borramos la caché interna corrupta de Fabric Loom
+        run: rm -rf ~/.gradle/caches/fabric-loom
+
       - name: Build with Gradle
-        run: gradle assemble --no-daemon
+        # Usamos clean y refresh-dependencies para forzar descarga 100% nueva
+        run: gradle clean assemble --refresh-dependencies --no-daemon
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ZombieTrade-Mod-1.21.11
+          path: "build/libs/*.jar"
