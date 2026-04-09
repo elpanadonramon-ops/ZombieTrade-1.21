@@ -24,13 +24,13 @@ public abstract class ZombieVillagerTradeMixin extends ZombieEntity {
         super(entityType, world);
     }
 
-    // Interfaz interna para acceder a los datos privados del zombi
+    // Usamos los nombres técnicos (Intermediary) que Gradle sí reconoce
     @Mixin(ZombieVillagerEntity.class)
     public interface ZombieVillagerAccessor {
-        @Accessor("offers")
+        @Accessor("field_18539") // Esto es 'offers'
         TradeOfferList getOffers();
 
-        @Accessor("experience")
+        @Accessor("field_18540") // Esto es 'experience'
         int getExperience();
     }
 
@@ -41,7 +41,6 @@ public abstract class ZombieVillagerTradeMixin extends ZombieEntity {
         if (itemStack.isOf(Items.EMERALD)) {
             ZombieVillagerEntity self = (ZombieVillagerEntity)(Object)this;
             
-            // Usamos la interfaz interna
             TradeOfferList offers = ((ZombieVillagerAccessor)self).getOffers();
             int exp = ((ZombieVillagerAccessor)self).getExperience();
 
