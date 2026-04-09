@@ -15,7 +15,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Make Gradle Executable
-          run: chmod +x gradlew
+        run: chmod +x gradlew
 
       - name: Build with Gradle
         run: ./gradlew build
