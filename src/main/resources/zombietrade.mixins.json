@@ -1,14 +1,14 @@
 {
-	"required": true,
-	"package": "me.miguel.zombietrade.mixin",
-	"compatibilityLevel": "JAVA_21",
-	"mixins": [
-		"ExampleMixin"
-	],
-	"injectors": {
-		"defaultRequire": 1
-	},
-	"overwrites": {
-		"requireAnnotations": true
-	}
+  "required": true,
+  "package": "me.miguel.zombietrade.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "ZombieVillagerTradeMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  }
 }
