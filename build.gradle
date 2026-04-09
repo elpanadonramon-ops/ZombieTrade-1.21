@@ -1,5 +1,4 @@
 plugins {
-    // Regresamos al 1.9 que es el que mejor entiende la 1.21.11
     id 'fabric-loom' version '1.9-SNAPSHOT'
     id 'maven-publish'
 }
@@ -16,17 +15,14 @@ repositories {
     mavenCentral()
 }
 
-// ESTO ES LO NUEVO: Desactiva el Unpick que está rompiendo el build
 loom {
-    unpick {
-        enabled = false
-    }
+    splitEnvironmentSourceSets()
 }
 
 dependencies {
     minecraft "com.mojang:minecraft:1.21.11"
     
-    // Mantenemos el mapping build.4 que encontraste
+    // El mapping estable de la .11 que encontraste
     mappings "net.fabricmc:yarn:1.21.11+build.4:v2"
     
     modImplementation "net.fabricmc:fabric-loader:0.16.0"
