@@ -21,7 +21,7 @@ jobs:
           cache-disabled: true
 
       - name: Build with Gradle
-        # Forzamos la limpieza y la descarga con el nuevo Loom
+        # Forzamos la descarga del nuevo Loom 1.9
         run: gradle clean build --refresh-dependencies --no-daemon
 
       - name: Upload Artifact
