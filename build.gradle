@@ -10,11 +10,19 @@ base {
     archivesName = "ZombieTrade-1.21.11"
 }
 
+repositories {
+    // Repositorios estándar para Fabric
+    maven { url = "https://maven.fabricmc.net/" }
+}
+
 dependencies {
-    minecraft "com.mojang:minecraft:1.21.1"
+    // Tu versión exacta 1.21.11
+    minecraft "com.mojang:minecraft:1.21.11"
     mappings loom.officialMojangMappings()
+    
+    // Loader y API compatibles con la rama 1.21
     modImplementation "net.fabricmc:fabric-loader:0.16.0"
-    modImplementation "net.fabricmc.fabric-api:fabric-api:0.102.0+1.21.1"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:0.102.1+1.21"
 }
 
 processResources {
