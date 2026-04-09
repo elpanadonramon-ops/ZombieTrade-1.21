@@ -20,12 +20,9 @@ jobs:
           gradle-version: '8.10'
           cache-disabled: true
 
-      - name: Make Gradle Executable
-        # ESTA LÍNEA ES LA QUE ARREGLA EL ERROR 126
-        run: chmod +x gradlew
-
       - name: Build with Gradle
-        run: ./gradlew build --refresh-dependencies --no-daemon
+        # USAMOS 'gradle' A SECAS PARA EVITAR EL 9.3
+        run: gradle build --refresh-dependencies --no-daemon
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
