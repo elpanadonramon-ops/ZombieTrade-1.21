@@ -18,4 +18,12 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build with Gradle
-        run: ./gradlew build --no-daemon
+        # Cambiamos "build" por "assemble" que es más directo 
+        # y añadimos el refresco de dependencias
+        run: ./gradlew assemble --refresh-dependencies --no-daemon
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ZombieTrade-Mod
+          path: build/libs/*.jar
