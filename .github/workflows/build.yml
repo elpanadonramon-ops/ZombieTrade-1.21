@@ -21,3 +21,10 @@ jobs:
 
       - name: Build with Gradle
         run: gradle clean build --no-daemon
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ZombieTrade-Mod-Pack
+          # Usamos un patrón más abierto para que encuentre el archivo sí o sí
+          path: build/libs/*.jar
