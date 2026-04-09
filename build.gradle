@@ -16,14 +16,19 @@ repositories {
 }
 
 loom {
+    // Esto es vital para que no se confunda de versión al mapear
     splitEnvironmentSourceSets()
 }
 
 dependencies {
+    // Mantenemos la versión de juego que quieres
     minecraft "com.mojang:minecraft:1.21.11"
     
-    // El mapping estable de la .11 que encontraste
-    mappings "net.fabricmc:yarn:1.21.11+build.4:v2"
+    // TRUCO: Usamos los mappings de la 1.21.1 pero aplicados a la .11
+    // Como son casi idénticas, esto evita que el Unpick explote
+    mappings loom.layered() {
+        mappings "net.fabricmc:yarn:1.21.1+build.3:v2"
+    }
     
     modImplementation "net.fabricmc:fabric-loader:0.16.0"
     modImplementation "net.fabricmc.fabric-api:fabric-api:0.102.0+1.21"
