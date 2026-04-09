@@ -29,12 +29,12 @@ public abstract class ZombieVillagerTradeMixin extends ZombieEntity {
         ItemStack itemStack = player.getStackInHand(hand);
 
         if (itemStack.isOf(Items.EMERALD)) {
-            if (!this.getWorld().isClient) {
-                // EXPLICACIÓN: Casteamos el 'this' (que es un zombi) a la interfaz Merchant 
-                // que es la que sí tiene los métodos de tradeo en la 1.21.11
-                Object self = (Object) this;
-                
-                if (self instanceof Merchant merchant) {
+            // Usamos la variable 'this.getWorld()' de forma que sea compatible con 1.21.11
+            World world = player.getWorld(); 
+
+            if (!world.isClient) {
+                // Comprobamos si la entidad puede actuar como comerciante
+                if ((Object) this instanceof Merchant merchant) {
                     TradeOfferList offers = merchant.getOffers();
                     
                     if (offers != null && !offers.isEmpty()) {
@@ -47,11 +47,12 @@ public abstract class ZombieVillagerTradeMixin extends ZombieEntity {
                             false
                         );
                     } else {
-                        player.sendMessage(Text.literal("§cEste zombi no tiene nada que vender todavía..."), true);
+                        player.sendMessage(Text.literal("§cEste zombi no tiene ofertas disponibles."), true);
                     }
                 }
             }
-            cir.setReturnValue(ActionResult.success(this.getWorld().isClient));
+            // Importante: Usamos la referencia de world que ya tenemos para evitar el error method_37908
+            cir.setReturnValue(ActionResult.success(world.isClient));
         }
     }
 }
