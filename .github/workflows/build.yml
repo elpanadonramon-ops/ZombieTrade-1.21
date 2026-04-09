@@ -18,10 +18,11 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.11'
+          cache-disabled: true
 
       - name: Build with Gradle
-        # Usamos --no-build-cache para obligar a reconstruir los mappings de Minecraft
-        run: gradle clean build --refresh-dependencies --no-daemon --no-build-cache
+        # Usamos clean build para asegurar que los nuevos mappings se apliquen bien
+        run: gradle clean build --no-daemon
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
