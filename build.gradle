@@ -16,10 +16,10 @@ repositories {
 }
 
 dependencies {
-    // La versión de tu captura de pantalla
+    // La versión de tu captura (Monturas del Caos)
     minecraft "com.mojang:minecraft:1.21.11"
     
-    // Mappings específicos para que reconozca a los nuevos zombies y nautilos
+    // Mappings oficiales para la 1.21.11
     mappings "net.fabricmc:yarn:1.21.11+build.1:v2"
     
     modImplementation "net.fabricmc:fabric-loader:0.16.0"
