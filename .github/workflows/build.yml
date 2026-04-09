@@ -21,7 +21,7 @@ jobs:
           cache-disabled: true
 
       - name: Build with Gradle
-        # Forzamos la descarga limpia de la 1.21.11
+        # Limpiamos todo para que los mappings viejos no estorben
         run: gradle clean build --refresh-dependencies --no-daemon
 
       - name: Upload Artifact
