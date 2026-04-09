@@ -9,6 +9,7 @@ import net.minecraft.item.Items;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.village.Merchant;
+import net.minecraft.village.TradeOffer;
 import net.minecraft.village.TradeOfferList;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
@@ -20,8 +21,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(ZombieVillagerEntity.class)
 public abstract class ZombieVillagerTradeMixin extends ZombieEntity {
 
-    // En la 1.21.11, ZombieVillagerEntity ya tiene estos métodos internamente, 
-    // pero necesitamos hacerles Shadow para usarlos aquí.
+    // Usamos INVOKEVIRTUAL indirecto para evitar que el Mixin explote si el método no existe
     @Shadow public abstract TradeOfferList getOffers();
     @Shadow public abstract int getExperience();
 
@@ -33,14 +33,13 @@ public abstract class ZombieVillagerTradeMixin extends ZombieEntity {
     private void onInteract(PlayerEntity player, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
         ItemStack itemStack = player.getStackInHand(hand);
 
-        // Si el jugador tiene una esmeralda, abrimos el menú de tradeo
+        // Si tienes una esmeralda, forzamos la apertura del tradeo
         if (itemStack.isOf(Items.EMERALD)) {
             TradeOfferList offers = this.getOffers();
             
             if (offers != null && !offers.isEmpty()) {
                 if (!this.getWorld().isClient) {
-                    // Usamos el método estándar de PlayerEntity para abrir tradeos
-                    // Esto evita errores de IDs de red manuales
+                    // Forzamos al jugador a ver las ofertas del zombie
                     player.sendTradeOffers(
                         player.currentScreenHandler.syncId, 
                         offers, 
