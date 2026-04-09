@@ -14,6 +14,11 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: 8.10
+
       - name: Make Gradle Executable
         run: chmod +x gradlew
 
