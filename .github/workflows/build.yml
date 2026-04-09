@@ -20,8 +20,11 @@ jobs:
           gradle-version: '8.10'
           cache-disabled: true
 
+      - name: Make Gradle Executable
+        # ESTA LÍNEA ES LA QUE ARREGLA EL ERROR 126
+        run: chmod +x gradlew
+
       - name: Build with Gradle
-        # Usamos build para que genere el .jar final
         run: ./gradlew build --refresh-dependencies --no-daemon
 
       - name: Upload Artifact
