@@ -21,8 +21,8 @@ jobs:
           cache-disabled: true
 
       - name: Build with Gradle
-        # USAMOS 'gradle' A SECAS PARA EVITAR EL 9.3
-        run: gradle build --refresh-dependencies --no-daemon
+        # Forzamos la limpieza y la descarga con el nuevo Loom
+        run: gradle clean build --refresh-dependencies --no-daemon
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
