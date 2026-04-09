@@ -12,12 +12,16 @@ base {
 
 repositories {
     maven { url = "https://maven.fabricmc.net/" }
+    maven { url = "https://libraries.minecraft.net/" } // Repositorio oficial de Mojang
     mavenCentral()
 }
 
 dependencies {
+    // La versión de las Monturas del Caos
     minecraft "com.mojang:minecraft:1.21.11"
-    mappings loom.officialMojangMappings()
+    
+    // Usamos Yarn para la 1.21.1, que es compatible con la .11 y mucho más estable
+    mappings "net.fabricmc:yarn:1.21.1+build.3:v2"
     
     modImplementation "net.fabricmc:fabric-loader:0.16.0"
     modImplementation "net.fabricmc.fabric-api:fabric-api:0.102.0+1.21"
@@ -32,6 +36,8 @@ processResources {
 
 tasks.withType(JavaCompile).configureEach {
     it.options.release = 21
+    // Esto asegura que el compilador busque los mappings de Minecraft
+    it.options.encoding = "UTF-8"
 }
 
 java {
