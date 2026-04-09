@@ -16,11 +16,11 @@ repositories {
 }
 
 dependencies {
+    // La versión de las Monturas del Caos
     minecraft "com.mojang:minecraft:1.21.11"
     
-    // Cambiamos a estos mappings que son los más estables para la arquitectura de la 1.21.x
-    // y no causan conflictos de nombres en el remap.
-    mappings "net.fabricmc:yarn:1.21.1+build.3:v2"
+    // El mapping estable que encontraste para la .11
+    mappings "net.fabricmc:yarn:1.21.11+build.4:v2"
     
     modImplementation "net.fabricmc:fabric-loader:0.16.0"
     modImplementation "net.fabricmc.fabric-api:fabric-api:0.102.0+1.21"
@@ -33,7 +33,6 @@ processResources {
     }
 }
 
-// Forzamos al Loom a que genere las clases antes de compilar
 tasks.withType(JavaCompile).configureEach {
     it.options.release = 21
 }
