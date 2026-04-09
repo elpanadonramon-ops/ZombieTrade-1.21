@@ -1,5 +1,4 @@
 plugins {
-    // Saltamos a la 1.9 para corregir el error de 'unpick'
     id 'fabric-loom' version '1.9-SNAPSHOT'
     id 'maven-publish'
 }
@@ -17,10 +16,7 @@ repositories {
 }
 
 dependencies {
-    // Mantenemos tu versión sagrada
     minecraft "com.mojang:minecraft:1.21.11"
-    
-    // Usamos los mappings oficiales de Mojang que son más estables para la .11
     mappings loom.officialMojangMappings()
     
     modImplementation "net.fabricmc:fabric-loader:0.16.0"
