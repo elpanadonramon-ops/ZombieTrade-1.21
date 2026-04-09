@@ -6,14 +6,13 @@ import net.minecraft.entity.mob.ZombieVillagerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.sound.SoundEvent;
+import net.minecraft.screen.SimpleNamedScreenHandlerFactory;
+import net.minecraft.screen.MerchantScreenHandler;
+import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.village.Merchant;
-import net.minecraft.village.TradeOffer;
 import net.minecraft.village.TradeOfferList;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -21,14 +20,10 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ZombieVillagerEntity.class)
-public abstract class ZombieVillagerTradeMixin extends ZombieEntity implements Merchant {
+public abstract class ZombieVillagerTradeMixin extends ZombieEntity {
 
     @Shadow public abstract TradeOfferList getOffers();
-    @Shadow public abstract void setOffers(TradeOfferList offers);
-    @Shadow public abstract void trade(TradeOffer offer);
-    @Shadow public abstract void onTrade(TradeOffer offer);
     @Shadow public abstract int getExperience();
-    @Shadow public abstract void setExperience(int experience);
 
     public ZombieVillagerTradeMixin(EntityType<? extends ZombieEntity> entityType, World world) {
         super(entityType, world);
@@ -38,13 +33,17 @@ public abstract class ZombieVillagerTradeMixin extends ZombieEntity implements M
     private void onInteract(PlayerEntity player, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
         ItemStack itemStack = player.getStackInHand(hand);
 
-        // Si el jugador tiene una esmeralda
         if (itemStack.isOf(Items.EMERALD)) {
             if (!this.getWorld().isClient) {
                 TradeOfferList offers = this.getOffers();
                 
                 if (offers != null && !offers.isEmpty()) {
-                    // Abrimos la interfaz usando el método de Merchant
+                    // Abrimos el menú de tradeo de forma manual para evitar el crash de Merchant
+                    player.openHandledScreen(new SimpleNamedScreenHandlerFactory((syncId, playerInventory, playerEntity) -> {
+                        return new MerchantScreenHandler(syncId, playerInventory, new net.minecraft.village.SimpleMerchant(playerEntity));
+                    }, Text.literal("Zombi Comerciante")));
+                    
+                    // Enviamos las ofertas después de abrir la pantalla
                     player.sendTradeOffers(
                         player.currentScreenHandler.syncId, 
                         offers, 
@@ -54,20 +53,10 @@ public abstract class ZombieVillagerTradeMixin extends ZombieEntity implements M
                         false
                     );
                 } else {
-                    player.sendMessage(net.minecraft.text.Text.literal("§cEste zombi no tiene nada que vender..."), true);
+                    player.sendMessage(Text.literal("§cEste zombi no tiene nada que vender..."), true);
                 }
             }
-            // Importante: SUCCESS para que la mano haga la animación y el juego sepa que pasó algo
             cir.setReturnValue(ActionResult.success(this.getWorld().isClient));
         }
     }
-
-    // Métodos obligatorios de la interfaz Merchant que hay que implementar 
-    // para que el juego no crashee al abrir la interfaz
-    @Override public void setCustomer(@Nullable PlayerEntity customer) {}
-    @Nullable @Override public PlayerEntity getCustomer() { return null; }
-    @Override public void sendOffers(PlayerEntity player, net.minecraft.text.Text name, int levelProgress) {}
-    @Override public boolean isClient() { return this.getWorld().isClient; }
-    @Override public SoundEvent getYesSound() { return net.minecraft.sound.SoundEvents.ENTITY_VILLAGER_YES; }
-    @Override public boolean canRefreshTrades() { return true; }
 }
