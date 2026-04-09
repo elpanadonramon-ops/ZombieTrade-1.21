@@ -11,18 +11,19 @@ base {
 }
 
 repositories {
-    // Repositorios estándar para Fabric
     maven { url = "https://maven.fabricmc.net/" }
+    mavenCentral()
 }
 
 dependencies {
-    // Tu versión exacta 1.21.11
+    // AHORA SÍ: 1.21.11 oficial de Monturas del Caos
     minecraft "com.mojang:minecraft:1.21.11"
     mappings loom.officialMojangMappings()
     
-    // Loader y API compatibles con la rama 1.21
     modImplementation "net.fabricmc:fabric-loader:0.16.0"
-    modImplementation "net.fabricmc.fabric-api:fabric-api:0.102.1+1.21"
+    
+    // Usamos la API de la 1.21 que es compatible con los Game Drops
+    modImplementation "net.fabricmc.fabric-api:fabric-api:0.102.0+1.21"
 }
 
 processResources {
