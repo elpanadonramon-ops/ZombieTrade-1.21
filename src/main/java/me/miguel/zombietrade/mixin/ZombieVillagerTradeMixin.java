@@ -8,7 +8,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.village.MerchantOffers;
+import net.minecraft.village.TradeOfferList; // Cambio aquí
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -19,8 +19,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(ZombieVillagerEntity.class)
 public abstract class ZombieVillagerTradeMixin extends ZombieEntity {
 
-    // Cambiamos el Shadow para que use el nombre correcto de la 1.21.x
-    @Shadow public abstract MerchantOffers method_8259(); 
+    // En 1.21.x, getOffers() se mapea como method_8259 y devuelve TradeOfferList
+    @Shadow public abstract TradeOfferList method_8259(); 
 
     public ZombieVillagerTradeMixin(EntityType<? extends ZombieEntity> entityType, World world) {
         super(entityType, world);
@@ -30,9 +30,9 @@ public abstract class ZombieVillagerTradeMixin extends ZombieEntity {
     private void onInteract(PlayerEntity player, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
         ItemStack itemStack = player.getStackInHand(hand);
 
-        // Si el jugador tiene una esmeralda, intentamos abrir el trade
+        // Activamos el tradeo solo si el jugador tiene una esmeralda en la mano
         if (itemStack.isOf(Items.EMERALD)) {
-            MerchantOffers offers = this.method_8259(); // Usamos el método corregido
+            TradeOfferList offers = this.method_8259();
             
             if (offers != null && !offers.isEmpty()) {
                 if (!this.getWorld().isClient) {
