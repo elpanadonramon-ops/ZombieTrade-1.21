@@ -6,15 +6,18 @@ import net.minecraft.entity.mob.ZombieVillagerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.village.SimpleMerchant;
 import net.minecraft.village.TradeOfferList;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+// IMPORTANTE: Este import le dice al Mixin dónde está el Accessor que creaste
+import me.miguel.zombietrade.mixin.ZombieVillagerEntityAccessor;
 
 @Mixin(ZombieVillagerEntity.class)
 public abstract class ZombieVillagerTradeMixin extends ZombieEntity {
@@ -29,19 +32,28 @@ public abstract class ZombieVillagerTradeMixin extends ZombieEntity {
 
         if (itemStack.isOf(Items.EMERALD)) {
             ZombieVillagerEntity self = (ZombieVillagerEntity)(Object)this;
-            // Usamos el Accessor para sacar las ofertas sin que el Mixin se rompa
+            
+            // Accedemos a los datos ocultos del zombi
             TradeOfferList offers = ((ZombieVillagerEntityAccessor)self).getOffers();
             int exp = ((ZombieVillagerEntityAccessor)self).getExperience();
 
-            if (!this.getWorld().isClient && offers != null && !offers.isEmpty()) {
-                SimpleMerchant merchant = new SimpleMerchant(player);
-                merchant.setOffers(offers);
-                player.sendTradeOffers(player.currentScreenHandler.syncId, offers, 1, exp, true, false);
-                cir.setReturnValue(ActionResult.SUCCESS);
-            } else if (!this.getWorld().isClient) {
-                player.sendMessage(net.minecraft.text.Text.literal("§cEste zombi no tiene nada que vender..."), true);
-                cir.setReturnValue(ActionResult.SUCCESS);
+            if (!this.getWorld().isClient) {
+                if (offers != null && !offers.isEmpty()) {
+                    // Abrimos la interfaz directamente con los datos del zombi
+                    player.sendTradeOffers(
+                        player.currentScreenHandler.syncId, 
+                        offers, 
+                        1, 
+                        exp, 
+                        true, 
+                        false
+                    );
+                } else {
+                    player.sendMessage(Text.literal("§cEste zombi no tiene nada que vender..."), true);
+                }
             }
+            // Retornamos SUCCESS para que el juego sepa que la esmeralda "activó" algo
+            cir.setReturnValue(ActionResult.success(this.getWorld().isClient));
         }
     }
 }
