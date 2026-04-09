@@ -3,12 +3,10 @@
   "package": "me.miguel.zombietrade.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "ZombieVillagerTradeMixin"
+    "ZombieVillagerTradeMixin",
+    "ZombieVillagerEntityAccessor"
   ],
   "injectors": {
     "defaultRequire": 1
-  },
-  "overwrites": {
-    "requireAnnotations": true
   }
 }
