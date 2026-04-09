@@ -21,11 +21,4 @@ jobs:
           cache-disabled: true
 
       - name: Build with Gradle
-        # Forzamos la desactivación del Unpick mediante una propiedad de Gradle
-        run: gradle clean build --no-daemon -Ploom.unpick=false
-
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ZombieTrade-Mod-1.21.11
-          path: "build/libs/*.jar"
+        run: gradle clean build --no-daemon
