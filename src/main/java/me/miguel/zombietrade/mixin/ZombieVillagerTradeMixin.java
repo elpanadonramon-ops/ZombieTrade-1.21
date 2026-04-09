@@ -8,6 +8,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.village.Merchant;
 import net.minecraft.village.TradeOfferList;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
@@ -16,14 +17,13 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.OptionalInt;
-
 @Mixin(ZombieVillagerEntity.class)
 public abstract class ZombieVillagerTradeMixin extends ZombieEntity {
 
-    // Referencias a métodos internos necesarios para la 1.21.11
-    @Shadow public abstract TradeOfferList method_8259(); // getOffers()
-    @Shadow public abstract int getExperience(); // Añadimos este Shadow para corregir el error
+    // En la 1.21.11, ZombieVillagerEntity ya tiene estos métodos internamente, 
+    // pero necesitamos hacerles Shadow para usarlos aquí.
+    @Shadow public abstract TradeOfferList getOffers();
+    @Shadow public abstract int getExperience();
 
     public ZombieVillagerTradeMixin(EntityType<? extends ZombieEntity> entityType, World world) {
         super(entityType, world);
@@ -33,15 +33,14 @@ public abstract class ZombieVillagerTradeMixin extends ZombieEntity {
     private void onInteract(PlayerEntity player, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
         ItemStack itemStack = player.getStackInHand(hand);
 
-        // Activamos el intercambio si el jugador tiene una esmeralda
+        // Si el jugador tiene una esmeralda, abrimos el menú de tradeo
         if (itemStack.isOf(Items.EMERALD)) {
-            TradeOfferList offers = this.method_8259();
+            TradeOfferList offers = this.getOffers();
             
             if (offers != null && !offers.isEmpty()) {
                 if (!this.getWorld().isClient) {
-                    // En 1.21.11, el ID se obtiene de forma distinta para abrir la interfaz
-                    OptionalInt menuId = player.openEditSignScreen(null); // Método auxiliar para obtener ID de red
-                    
+                    // Usamos el método estándar de PlayerEntity para abrir tradeos
+                    // Esto evita errores de IDs de red manuales
                     player.sendTradeOffers(
                         player.currentScreenHandler.syncId, 
                         offers, 
