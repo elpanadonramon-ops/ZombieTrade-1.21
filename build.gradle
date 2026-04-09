@@ -16,13 +16,13 @@ repositories {
 }
 
 dependencies {
-    // AHORA SÍ: 1.21.11 oficial de Monturas del Caos
+    // La versión de tu captura de pantalla
     minecraft "com.mojang:minecraft:1.21.11"
-    mappings loom.officialMojangMappings()
+    
+    // Mappings específicos para que reconozca a los nuevos zombies y nautilos
+    mappings "net.fabricmc:yarn:1.21.11+build.1:v2"
     
     modImplementation "net.fabricmc:fabric-loader:0.16.0"
-    
-    // Usamos la API de la 1.21 que es compatible con los Game Drops
     modImplementation "net.fabricmc.fabric-api:fabric-api:0.102.0+1.21"
 }
 
