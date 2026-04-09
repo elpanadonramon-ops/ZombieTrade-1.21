@@ -10,9 +10,6 @@ base {
     archivesName = "ZombieTrade-1.21.11"
 }
 
-repositories {
-}
-
 dependencies {
     minecraft "com.mojang:minecraft:1.21.1"
     mappings loom.officialMojangMappings()
@@ -41,8 +38,4 @@ jar {
     from("LICENSE") {
         rename { "${it}_${project.base.archivesName.get()}"}
     }
-}
-    withSourcesJar()
-    sourceCompatibility = JavaVersion.VERSION_21
-    targetCompatibility = JavaVersion.VERSION_21
 }
