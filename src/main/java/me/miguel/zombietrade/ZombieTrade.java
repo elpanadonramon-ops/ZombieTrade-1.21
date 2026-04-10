@@ -19,20 +19,24 @@ public class ZombieTrade implements ModInitializer {
     public void onInitialize() {
         TradeOfferHelper.registerVillagerOffers(VillagerProfession.ARMORER, 5, (factories) -> {
             factories.add((entity, random) -> {
+                // Filtra todos los items que contengan "smithing_template" en su nombre interno
                 List<Item> allTrims = Registries.ITEM.stream()
                         .filter(item -> Registries.ITEM.getId(item).getPath().contains("smithing_template"))
                         .collect(Collectors.toList());
 
+                // Elige una plantilla al azar de la lista
                 Item selectedTrim = allTrims.isEmpty() ? Items.SENTRY_ARMOR_TRIM_SMITHING_TEMPLATE : allTrims.get(random.nextInt(allTrims.size()));
+                
+                // Precio aleatorio entre 16 y 32 esmeraldas
                 int price = 16 + random.nextInt(17);
 
-                // Usamos el constructor más básico para evitar errores de campos inexistentes
                 return new TradeOffer(
-                        new TradedItem(Items.EMERALD, price),
-                        new ItemStack(selectedTrim),
-                        3,  // maxUses
-                        15, // merchantExperience
-                        0.05f // priceMultiplier
+                        new TradedItem(Items.EMERALD, price), 
+                        Optional.empty(),                    
+                        new ItemStack(selectedTrim),          
+                        3,      // Usos máximos
+                        15,     // Experiencia para el aldeano
+                        0.05f   // Multiplicador de precio
                 );
             });
         });
