@@ -10,11 +10,9 @@ import net.minecraft.village.TradedItem;
 import net.minecraft.village.VillagerProfession;
 import net.minecraft.item.Item;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class ZombieTrade implements ModInitializer {
-
     @Override
     public void onInitialize() {
         TradeOfferHelper.registerVillagerOffers(VillagerProfession.ARMORER, 5, (factories) -> {
@@ -32,11 +30,12 @@ public class ZombieTrade implements ModInitializer {
 
                 return new TradeOffer(
                         new TradedItem(Items.EMERALD, price), 
-                        Optional.empty(),                    
+                        null,                                // Cambiado de Optional.empty() a null
                         new ItemStack(selectedTrim),          
-                        3,      // Usos máximos
-                        15,     // Experiencia para el aldeano
-                        0.05f   // Multiplicador de precio
+                        3,                                   // Usos máximos
+                        15,                                  // Experiencia para el aldeano
+                        0.05f,                               // Multiplicador de precio
+                        true                                 // demandBonus (nuevo parámetro obligatorio)
                 );
             });
         });
