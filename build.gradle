@@ -7,27 +7,27 @@ version = "1.0.0"
 group = "me.miguel.zombietrade"
 
 base {
-    // Definimos el nombre base aquí para que Loom lo reconozca
-    archivesName = "ZombieTrade-1.21.x"
+    archivesName = "TrimTrades-1.21.11"
 }
 
 repositories {
     maven { url = "https://maven.fabricmc.net/" }
-    maven { url = "https://maven.architectury.dev/" } // Necesario para Architectury
+    maven { url = "https://maven.architectury.dev/" }
     mavenCentral()
 }
 
 dependencies {
-    // Configuración de Minecraft y Mappings
-    minecraft "com.mojang:minecraft:1.21.1"
-    mappings "net.fabricmc:yarn:1.21.1+build.3:v2"
+    // Configuración para Minecraft 1.21.11 [cite: 2, 7]
+    minecraft "com.mojang:minecraft:1.21.11"
     
-    // Loader y Fabric API
-    modImplementation "net.fabricmc:fabric-loader:0.16.0"
-    modImplementation "net.fabricmc.fabric-api:fabric-api:0.102.0+1.21"
+    // Mappings actualizados para evitar el crash NoSuchFieldError 
+    mappings "net.fabricmc:yarn:1.21.11+build.1:v2"
+    
+    // Loader y Fabric API compatibles con la 1.21.11 [cite: 10, 13]
+    modImplementation "net.fabricmc:fabric-loader:0.18.6"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:0.141.3+1.21.11"
 
-    // --- LIBRERÍA DE COMPATIBILIDAD ---
-    // Usamos Architectury para manejar los menús de tradeo de forma segura
+    // Librería de compatibilidad
     modImplementation "dev.architectury:architectury-fabric:13.0.6"
 }
 
@@ -48,17 +48,15 @@ java {
     targetCompatibility = JavaVersion.VERSION_21
 }
 
-// Configuración de la tarea JAR corregida para Gradle 8.x
 jar {
-    archiveBaseName = "ZombieTrade-1.21.x"
+    archiveBaseName = "TrimTrades"
     from("LICENSE") {
         rename { "${it}_${project.name}" }
     }
-    // Evita conflictos de archivos duplicados entre Fabric y Architectury
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
-// Configuración para el remap del JAR (necesario en Fabric)
+// Configuración del nombre del archivo final para la 1.21.11
 remapJar {
-    archiveFileName = "ZombieTrade-1.21.1-Fabric.jar"
+    archiveFileName = "TrimTrades-1.21.11-Fabric.jar"
 }
