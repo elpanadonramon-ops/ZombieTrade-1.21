@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "id": "zombietrade", 
+  "id": "zombietrade",
   "version": "1.0.0",
   "name": "Trim Trades",
-  "description": "Añade la posibilidad de comprar Armor Trims a los Armeros nivel Maestro.",
+  "description": "Añade la probabilidad de comprar Plantillas de Herrería (Armor Trims) aleatorias a los Armeros de nivel Maestro.",
   "authors": [
     "Miguel"
   ],
