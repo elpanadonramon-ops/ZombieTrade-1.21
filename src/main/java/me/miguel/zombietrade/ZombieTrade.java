@@ -1,24 +1,43 @@
 package me.miguel.zombietrade;
 
 import net.fabricmc.api.ModInitializer;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import net.fabricmc.fabric.api.object.builder.v1.trade.TradeOfferHelper;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.registry.Registries;
+import net.minecraft.village.TradeOffer;
+import net.minecraft.village.VillagerProfession;
+import net.minecraft.item.ArmorTrimItem;
+import java.util.stream.Collectors;
 
 public class ZombieTrade implements ModInitializer {
-	public static final String MOD_ID = "zombietrade";
 
-	// This logger is used to write text to the console and the log file.
-	// It is considered best practice to use your mod id as the logger's name.
-	// That way, it's clear which mod wrote info, warnings, and errors.
-	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+    @Override
+    public void onInitialize() {
+        // Registramos el tradeo para el ARMORER (Herrero de armaduras) nivel 5 (Maestro)
+        TradeOfferHelper.registerVillagerOffers(VillagerProfession.ARMORER, 5, (factories) -> {
+            factories.add((entity, random) -> {
+                
+                // 1. Obtenemos todos los Armor Trims registrados en el juego
+                var allTrims = Registries.ITEM.stream()
+                        .filter(item -> item instanceof ArmorTrimItem)
+                        .collect(Collectors.toList());
 
-	@Override
-	public void onInitialize() {
-		// This code runs as soon as Minecraft is in a mod-load-ready state.
-		// However, some things (like resources) may still be uninitialized.
-		// Proceed with mild caution.
+                // 2. Si por alguna razón no hay trims, damos uno por defecto (Sentry) para evitar errores
+                var selectedTrim = allTrims.isEmpty() ? Items.SENTRY_ARMOR_TRIM_SMITHING_TEMPLATE : allTrims.get(random.nextInt(allTrims.size()));
 
-		LOGGER.info("Hello Fabric world!");
-	}
+                // 3. Precio aleatorio entre 16 y 32 esmeraldas
+                int price = 16 + random.nextInt(17);
+
+                // 4. Retornamos el tradeo: Esmeraldas -> Armor Trim aleatorio
+                return new TradeOffer(
+                        new ItemStack(Items.EMERALD, price), // Costo
+                        new ItemStack(selectedTrim),         // Recompensa
+                        3,                                   // Máximo 3 usos antes de que el aldeano necesite trabajar
+                        15,                                  // Experiencia para el aldeano
+                        0.05f                                // Multiplicador de precio por demanda
+                );
+            });
+        });
+    }
 }
