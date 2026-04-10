@@ -11,15 +11,15 @@ import net.minecraft.village.VillagerProfession;
 import net.minecraft.item.Item;
 import java.util.List;
 import java.util.stream.Collectors;
-// Eliminada: import java.util.Optional;
+// Eliminada: import java.util.Optional; (no se necesita con el constructor de 5 params)
 
 public class ZombieTrade implements ModInitializer {
     @Override
     public void onInitialize() {
-        TradeOfferHelper.registerVillagerOffers(VillagerProfession.ARMORER, 5, (factories) -> {
-            // ⚠️ Lambda corregido: solo recibe 'random', no 'entity, random'
-            factories.add((random) -> {
-                // Filtra únicamente las plantillas de armadura
+        TradeOfferHelper.registerVillagerOffers(VillagerProfession.ARMORER, 5, factories -> {
+            // ⚠️ Factory lambda: recibe (entity, random) donde Random es de net.minecraft.util.math.random
+            factories.add((entity, random) -> {
+                // Filtra únicamente plantillas de armadura
                 List<Item> allTrims = Registries.ITEM.stream()
                         .filter(item -> Registries.ITEM.getId(item).getPath().endsWith("_armor_trim_smithing_template"))
                         .collect(Collectors.toList());
@@ -30,14 +30,13 @@ public class ZombieTrade implements ModInitializer {
                 // Precio aleatorio entre 16 y 30 esmeraldas (16 + [0..14] = 16..30)
                 int price = 16 + random.nextInt(15);
 
+                // ✅ Constructor de 5 parámetros (NO usa Optional, compatible con 1.21.11)
                 return new TradeOffer(
-                        new TradedItem(Items.EMERALD, price), // Primera ranura: esmeraldas
-                        null,                                 // Segunda ranura: null (vacía)
-                        new ItemStack(selectedTrim),          // Resultado: plantilla elegida
-                        3,                                    // Usos máximos antes de bloquearse
-                        15,                                   // Experiencia que gana el aldeano (int)
-                        0.05f,                                // Multiplicador de precio (float)
-                        true                                  // demandBonus (booleano obligatorio desde 1.20.5)
+                        new TradedItem(Items.EMERALD, price), // Item de compra
+                        new ItemStack(selectedTrim),           // Item de venta
+                        3,                                     // maxUses
+                        15,                                    // merchantExperience
+                        0.05f                                  // priceMultiplier (float, NO int)
                 );
             });
         });
