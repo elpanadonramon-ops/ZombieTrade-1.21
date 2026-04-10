@@ -12,18 +12,20 @@ base {
 
 repositories {
     maven { url = "https://maven.fabricmc.net/" }
+    maven { url = "https://maven.architectury.dev/" } // Repositorio para Architectury
     mavenCentral()
 }
 
 dependencies {
-    // Compilamos con la 1.21.1 para que el Loom no explote
     minecraft "com.mojang:minecraft:1.21.1"
-    
-    // Usamos los mappings estables que tu código ya conoce
     mappings "net.fabricmc:yarn:1.21.1+build.3:v2"
     
     modImplementation "net.fabricmc:fabric-loader:0.16.0"
     modImplementation "net.fabricmc.fabric-api:fabric-api:0.102.0+1.21"
+
+    // --- DEPENDENCIA DE SEGURIDAD ---
+    // Architectury API para manejar menús y entidades sin crashes
+    modImplementation "dev.architectury:architectury-fabric:13.0.6"
 }
 
 processResources {
@@ -41,4 +43,10 @@ java {
     withSourcesJar()
     sourceCompatibility = JavaVersion.VERSION_21
     targetCompatibility = JavaVersion.VERSION_21
+}
+
+jar {
+    from("LICENSE") {
+        rename { "${it}_${project.archivesName}"}
+    }
 }
