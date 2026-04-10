@@ -7,24 +7,27 @@ version = "1.0.0"
 group = "me.miguel.zombietrade"
 
 base {
+    // Definimos el nombre base aquí para que Loom lo reconozca
     archivesName = "ZombieTrade-1.21.x"
 }
 
 repositories {
     maven { url = "https://maven.fabricmc.net/" }
-    maven { url = "https://maven.architectury.dev/" } // Repositorio para Architectury
+    maven { url = "https://maven.architectury.dev/" } // Necesario para Architectury
     mavenCentral()
 }
 
 dependencies {
+    // Configuración de Minecraft y Mappings
     minecraft "com.mojang:minecraft:1.21.1"
     mappings "net.fabricmc:yarn:1.21.1+build.3:v2"
     
+    // Loader y Fabric API
     modImplementation "net.fabricmc:fabric-loader:0.16.0"
     modImplementation "net.fabricmc.fabric-api:fabric-api:0.102.0+1.21"
 
-    // --- DEPENDENCIA DE SEGURIDAD ---
-    // Architectury API para manejar menús y entidades sin crashes
+    // --- LIBRERÍA DE COMPATIBILIDAD ---
+    // Usamos Architectury para manejar los menús de tradeo de forma segura
     modImplementation "dev.architectury:architectury-fabric:13.0.6"
 }
 
@@ -45,8 +48,17 @@ java {
     targetCompatibility = JavaVersion.VERSION_21
 }
 
+// Configuración de la tarea JAR corregida para Gradle 8.x
 jar {
+    archiveBaseName = "ZombieTrade-1.21.x"
     from("LICENSE") {
-        rename { "${it}_${project.archivesName}"}
+        rename { "${it}_${project.name}" }
     }
+    // Evita conflictos de archivos duplicados entre Fabric y Architectury
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+// Configuración para el remap del JAR (necesario en Fabric)
+remapJar {
+    archiveFileName = "ZombieTrade-1.21.1-Fabric.jar"
 }
