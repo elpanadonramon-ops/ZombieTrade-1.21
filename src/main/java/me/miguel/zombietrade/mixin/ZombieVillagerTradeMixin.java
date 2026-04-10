@@ -1,61 +1,53 @@
 package me.miguel.zombietrade.mixin;
 
-import me.miguel.zombietrade.ZombieMerchant;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.mob.ZombieEntity;
+import dev.architectury.registry.menu.MenuRegistry;
 import net.minecraft.entity.mob.ZombieVillagerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.screen.SimpleNamedScreenHandlerFactory;
+import net.minecraft.screen.MerchantScreenHandler;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.village.Merchant;
+import net.minecraft.village.SimpleMerchant;
 import net.minecraft.village.TradeOfferList;
-import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ZombieVillagerEntity.class)
-public abstract class ZombieVillagerTradeMixin extends ZombieEntity implements ZombieMerchant {
-
-    @Shadow public abstract TradeOfferList getOffers();
-    @Shadow public abstract int getExperience();
-
-    public ZombieVillagerTradeMixin(EntityType<? extends ZombieEntity> entityType, World world) {
-        super(entityType, world);
-    }
-
-    @Override
-    public TradeOfferList getZombieOffers() { return this.getOffers(); }
-
-    @Override
-    public int getZombieExperience() { return this.getExperience(); }
+public class ZombieVillagerTradeMixin {
 
     @Inject(method = "interactMob", at = @At("HEAD"), cancellable = true)
     private void onInteract(PlayerEntity player, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
         ItemStack itemStack = player.getStackInHand(hand);
-
+        
+        // Si el jugador tiene una esmeralda
         if (itemStack.isOf(Items.EMERALD)) {
+            ZombieVillagerEntity zombi = (ZombieVillagerEntity)(Object)this;
+            
             if (!player.getWorld().isClient()) {
-                TradeOfferList offers = this.getZombieOffers();
+                // Casteamos el zombi a Merchant (porque internamente lo es)
+                // Usamos Architectury para abrir el menú de forma segura
+                Merchant merchant = (Merchant) zombi;
+                TradeOfferList offers = merchant.getOffers();
                 
                 if (offers != null && !offers.isEmpty()) {
-                    player.sendTradeOffers(
-                        player.currentScreenHandler.syncId, 
-                        offers, 
-                        1, 
-                        this.getZombieExperience(), 
-                        true, 
-                        false
-                    );
+                    // MenuRegistry es la "magia" de Architectury que evita los crashes de red
+                    MenuRegistry.openExtendedMenu(player, new SimpleNamedScreenHandlerFactory((syncId, inv, p) -> {
+                        return new MerchantScreenHandler(syncId, inv, new SimpleMerchant(p) {
+                            @Override
+                            public TradeOfferList getOffers() { return offers; }
+                        });
+                    }, Text.literal("Aldeano Zombi Comerciante")));
                 } else {
-                    player.sendMessage(Text.literal("§cEste zombi no tiene nada que vender..."), true);
+                    player.sendMessage(Text.literal("§cEste zombi no tiene ofertas disponibles."), true);
                 }
             }
+            // Cancelamos la interacción normal (para que no te muerda al intentar tradear)
             cir.setReturnValue(ActionResult.success(player.getWorld().isClient()));
         }
     }
